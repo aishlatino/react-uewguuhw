@@ -48,7 +48,6 @@ async function analyzeCharacter(base64Image) {
     Example: "A stylized 3D animated boy, curly brown hair, round glasses, blue t-shirt, denim shorts, fair skin".
   `;
   
-  // Using gemini-1.5-flash as it is the most stable for free keys
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -121,12 +120,8 @@ async function generateStory(name, theme, age) {
 }
 
 async function generateImage(characterDesc, sceneDesc) {
-  // We use Pollinations here because it works FREE without the "Trusted Tester" error 
-  // that Google's Imagen model would give you on a new account.
-  // It still uses the EXACT prompt logic you designed.
   const finalPrompt = encodeURIComponent(`Make ${characterDesc}, ${sceneDesc}, ${STYLE_PROMPT_SUFFIX}`);
   const seed = Math.floor(Math.random() * 100000);
-  // We add 'nologo=true' to keep it clean like your design requested
   return `https://pollinations.ai/p/${finalPrompt}?width=1024&height=1024&seed=${seed}&nologo=true&model=flux`;
 }
 
@@ -182,26 +177,6 @@ export default function MagicStorybook() {
   const [bookData, setBookData] = useState(null);
   const [error, setError] = useState(null);
   const bookRef = useRef(null);
-
-  // ⚡️ SYSTEM INJECTOR: This makes the design work without 'npm install'
-  useEffect(() => {
-    // 1. Inject Tailwind CSS
-    const tailwind = document.createElement('script');
-    tailwind.src = "https://cdn.tailwindcss.com";
-    document.head.appendChild(tailwind);
-
-    // 2. Inject Google Fonts (Poppins)
-    const fontLink = document.createElement('link');
-    fontLink.href = "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap";
-    fontLink.rel = "stylesheet";
-    document.head.appendChild(fontLink);
-
-    // 3. Inject HTML2PDF
-    const pdfScript = document.createElement('script');
-    pdfScript.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-    pdfScript.async = true;
-    document.body.appendChild(pdfScript);
-  }, []);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
